@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Audio;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -34,6 +35,14 @@ public class PlayerMovement : MonoBehaviour
         else if (moveHorizontal < 0)
         {
             spriteRenderer.flipX = true; // olhando para a esquerda
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.tag == "Coletavel")
+        {
+            Destroy(other.gameObject);
         }
     }
 }
