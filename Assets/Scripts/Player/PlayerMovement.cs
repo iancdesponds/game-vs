@@ -1,46 +1,53 @@
 using UnityEngine;
-using UnityEngine.Audio;
 
 public class PlayerMovement : MonoBehaviour
 {
     private Rigidbody2D rb;
     private Animator animator;
-    private SpriteRenderer spriteRenderer; // Novo!
+    private SpriteRenderer spriteRenderer;
+
     public float speed;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
-        spriteRenderer = GetComponent<SpriteRenderer>(); // Pega o SpriteRenderer
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     void FixedUpdate()
     {
-        float moveHorizontal = Input.GetAxis("Horizontal");
-        float moveVertical = Input.GetAxis("Vertical");
+        float moveHorizontal = Input.GetAxisRaw("Horizontal"); // Mudei para GetAxisRaw
+        float moveVertical = Input.GetAxisRaw("Vertical");
 
         Vector2 movement = new Vector2(moveHorizontal, moveVertical);
 
-        rb.MovePosition(rb.position + movement * speed * Time.fixedDeltaTime);
+        // Se não estiver apertando nada, para completamente
+        if (movement == Vector2.zero)
+        {
+            animator.SetFloat("Speed", 0f);
+            return; // sai do FixedUpdate para não mover
+        }
 
-        // Atualiza a velocidade no Animator
+        Vector2 normalizedMovement = movement.normalized;
+
+        rb.MovePosition(rb.position + normalizedMovement * speed * Time.fixedDeltaTime);
+
         animator.SetFloat("Speed", movement.magnitude);
 
-        // Inverte o sprite se mover para a esquerda
         if (moveHorizontal > 0)
         {
-            spriteRenderer.flipX = false; // olhando para a direita
+            spriteRenderer.flipX = false;
         }
         else if (moveHorizontal < 0)
         {
-            spriteRenderer.flipX = true; // olhando para a esquerda
+            spriteRenderer.flipX = true;
         }
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.tag == "Coletavel")
+        if (other.CompareTag("Coletavel"))
         {
             Destroy(other.gameObject);
         }
