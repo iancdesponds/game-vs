@@ -22,12 +22,13 @@ public class PlayerMovement : MonoBehaviour
 
         Vector2 movement = new Vector2(moveHorizontal, moveVertical);
 
-        // Se não estiver apertando nada, para completamente
         if (movement == Vector2.zero)
         {
             animator.SetFloat("Speed", 0f);
-            return; // sai do FixedUpdate para não mover
+            rb.MovePosition(rb.position); 
+            return;
         }
+
 
         Vector2 normalizedMovement = movement.normalized;
 
