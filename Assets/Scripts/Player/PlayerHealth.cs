@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class PlayerHealth : MonoBehaviour
 {
@@ -7,12 +8,18 @@ public class PlayerHealth : MonoBehaviour
     private Animator animator;
     public int maxHealth = 100;
     private int currentHealth;
+    public HealthBarUI healthBarUI;
 
     void Start()
     {
         currentHealth = maxHealth;
+        healthBarUI.SetMaxHealth(maxHealth);
         spriteRenderer = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
+
+        LayoutRebuilder.ForceRebuildLayoutImmediate(
+        healthBarUI.slider.GetComponent<RectTransform>()
+    );
     }
 
     public void TakeDamage(int damage)
@@ -21,10 +28,13 @@ public class PlayerHealth : MonoBehaviour
 
         StartCoroutine(FlashRed());
 
+
         if (currentHealth <= 0)
         {
             Die();
         }
+
+        healthBarUI.SetHealth(currentHealth);
     }
 
     IEnumerator FlashRed()
