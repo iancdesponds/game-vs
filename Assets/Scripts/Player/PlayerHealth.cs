@@ -5,7 +5,7 @@ public class PlayerHealth : MonoBehaviour
 {
     private SpriteRenderer spriteRenderer;
     private Animator animator;
-    public int maxHealth = 20;
+    public int maxHealth = 100;
     private int currentHealth;
 
     void Start()
