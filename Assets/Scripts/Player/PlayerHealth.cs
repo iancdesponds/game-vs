@@ -8,6 +8,10 @@ public class PlayerHealth : MonoBehaviour
     private Animator animator;
     public int maxHealth = 100;
     private int currentHealth;
+    public AudioClip damageClip;
+    private AudioSource audioSource;
+
+
     public HealthBarUI healthBarUI;
 
     void Start()
@@ -16,6 +20,13 @@ public class PlayerHealth : MonoBehaviour
         healthBarUI.SetMaxHealth(maxHealth);
         spriteRenderer = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
+        audioSource = GetComponent<AudioSource>();
+
+    }
+
+    public void PlayDamage()
+    {
+        audioSource.PlayOneShot(damageClip);
 
         LayoutRebuilder.ForceRebuildLayoutImmediate(
         healthBarUI.slider.GetComponent<RectTransform>()
@@ -27,6 +38,7 @@ public class PlayerHealth : MonoBehaviour
         currentHealth -= damage;
 
         StartCoroutine(FlashRed());
+        PlayDamage();
 
 
         if (currentHealth <= 0)
