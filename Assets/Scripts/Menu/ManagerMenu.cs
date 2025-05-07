@@ -16,6 +16,12 @@ public class ManagerMenu : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
         SceneManager.LoadSceneAsync(1);
     }
 
+    public void QuitGame()
+    {
+        Application.Quit();
+        Debug.Log("Game has been quit."); // Only visible in editor
+    }
+
     public void OnPointerEnter(PointerEventData eventData)
     {
         backgroundImage.sprite = playHoverBackground;
