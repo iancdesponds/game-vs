@@ -335,7 +335,15 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      sprite_sheet_glow_effect_0: 8781297332573216695
+      sprite_sheet_glow_effect_1: -1780338610089827887
+      sprite_sheet_glow_effect_2: -7959855948334103760
+      sprite_sheet_glow_effect_3: -5528490494918340887
+      sprite_sheet_glow_effect_4: -4879323873622885016
+      sprite_sheet_glow_effect_5: -6684526802264332769
+      sprite_sheet_glow_effect_6: 9157502626306143809
+      sprite_sheet_glow_effect_7: 9142890113254000257
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
