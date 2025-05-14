@@ -15,7 +15,8 @@ GameObject:
   - component: {fileID: 1907375101539619683}
   - component: {fileID: 6290798543898183357}
   - component: {fileID: 5360439526925186045}
-  m_Layer: 0
+  - component: {fileID: 5253083092119402204}
+  m_Layer: 6
   m_Name: Green_orc
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -255,3 +256,17 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.16, y: 0.19}
   m_EdgeRadius: 0
+--- !u!114 &5253083092119402204
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5067638094259734672}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 728885506de81486f881f78bb1e98890, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 2
+  dropPrefab: {fileID: 5665320566165942121, guid: 05d608bc79c326b4c9709881dbcdc90e, type: 3}
