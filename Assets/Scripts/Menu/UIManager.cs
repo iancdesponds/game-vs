@@ -10,20 +10,13 @@ public class UIManager : MonoBehaviour
 
     void Awake()
     {
-        // Singleton pattern
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        Debug.Log("asd");
     }
 
     void Start()
     {
         if (endGamePanel != null)
+            Time.timeScale = 1f;
             endGamePanel.SetActive(false);
     }
 
@@ -36,7 +29,8 @@ public class UIManager : MonoBehaviour
     // Botão: Reiniciar o jogo
     public void RestartGame()
     {
-        SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex);
+        Debug.Log("aaa");
+        SceneManager.LoadSceneAsync(1);
     }
 
     // Botão: Voltar ao menu
