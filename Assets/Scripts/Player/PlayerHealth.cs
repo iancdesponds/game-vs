@@ -11,6 +11,7 @@ public class PlayerHealth : MonoBehaviour
     public AudioClip damageClip;
     private AudioSource audioSource;
 
+    public UIManager uiManager;
 
     public HealthBarUI healthBarUI;
 
@@ -59,7 +60,8 @@ public class PlayerHealth : MonoBehaviour
     void Die()
     {
         Debug.Log("Player morreu!");
-        UIManager.Instance.ShowEndGame();
+        uiManager.ShowEndGame();
 
+        Time.timeScale = 0f;
     }
 }
