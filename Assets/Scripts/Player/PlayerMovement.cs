@@ -10,6 +10,8 @@ public class PlayerMovement : MonoBehaviour
     public AudioClip coinClip;
     private AudioSource audioSource;
 
+    public CoinManager coinManager;
+
     public float speed;
 
     private float footstepTimer = 0f;
@@ -83,6 +85,7 @@ public class PlayerMovement : MonoBehaviour
         if (other.CompareTag("Coletavel"))
         {
             Destroy(other.gameObject);
+            coinManager.AddCoin(5);
             audioSource.PlayOneShot(coinClip);
         }
         else if (other.CompareTag("Xp"))
