@@ -12,17 +12,17 @@ public class PlayerHealth : MonoBehaviour
     private AudioSource audioSource;
 
     public UIManager uiManager;
-
     public HealthBarUI healthBarUI;
 
     void Start()
     {
         currentHealth = maxHealth;
         healthBarUI.SetMaxHealth(maxHealth);
+        healthBarUI.SetHealth(currentHealth);
+
         spriteRenderer = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
         audioSource = GetComponent<AudioSource>();
-
     }
 
     public void PlayDamage()
@@ -30,8 +30,8 @@ public class PlayerHealth : MonoBehaviour
         audioSource.PlayOneShot(damageClip);
 
         LayoutRebuilder.ForceRebuildLayoutImmediate(
-        healthBarUI.slider.GetComponent<RectTransform>()
-    );
+            healthBarUI.slider.GetComponent<RectTransform>()
+        );
     }
 
     public void TakeDamage(int damage)
@@ -41,7 +41,6 @@ public class PlayerHealth : MonoBehaviour
         StartCoroutine(FlashRed());
         PlayDamage();
 
-
         if (currentHealth <= 0)
         {
             Die();
@@ -50,18 +49,30 @@ public class PlayerHealth : MonoBehaviour
         healthBarUI.SetHealth(currentHealth);
     }
 
+    public void IncreaseMaxHealth(int extraHealth)
+    {
+        maxHealth += extraHealth;
+        currentHealth += extraHealth;
+
+        healthBarUI.SetMaxHealth(maxHealth);
+        healthBarUI.SetHealth(currentHealth);
+
+        LayoutRebuilder.ForceRebuildLayoutImmediate(
+            healthBarUI.slider.GetComponent<RectTransform>()
+        );
+    }
+
     IEnumerator FlashRed()
     {
-        spriteRenderer.color = Color.red; // pinta de vermelho
-        yield return new WaitForSeconds(0.1f); // espera 0.1 segundos
-        spriteRenderer.color = Color.white; // volta para cor normal
+        spriteRenderer.color = Color.red;
+        yield return new WaitForSeconds(0.1f);
+        spriteRenderer.color = Color.white;
     }
 
     void Die()
     {
         Debug.Log("Player morreu!");
         uiManager.ShowEndGame();
-
         Time.timeScale = 0f;
     }
 }

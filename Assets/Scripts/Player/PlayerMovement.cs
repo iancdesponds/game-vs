@@ -15,6 +15,8 @@ public class PlayerMovement : MonoBehaviour
     private float footstepTimer = 0f;
     public float footstepInterval = 0.4f;
 
+    public PlayerXP playerXP; // <- Adicionado
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -31,8 +33,6 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    
-
     void FixedUpdate()
     {
         float moveHorizontal = Input.GetAxisRaw("Horizontal");
@@ -46,7 +46,7 @@ public class PlayerMovement : MonoBehaviour
         {
             animator.SetFloat("Speed", 0f);
             rb.MovePosition(rb.position);
-            footstepTimer = 0f; // reseta timer se parou
+            footstepTimer = 0f;
             return;
         }
 
@@ -79,6 +79,16 @@ public class PlayerMovement : MonoBehaviour
         {
             Destroy(other.gameObject);
             audioSource.PlayOneShot(coinClip);
+        }
+        else if (other.CompareTag("Xp"))
+        {
+            Destroy(other.gameObject);
+            audioSource.PlayOneShot(coinClip);
+
+            if (playerXP != null)
+            {
+                playerXP.GainXP(10); // <- valor que aumenta a stamina
+            }
         }
     }
 }
