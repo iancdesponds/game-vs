@@ -8290,6 +8290,7 @@ GameObject:
   m_Component:
   - component: {fileID: 952110947}
   - component: {fileID: 952110948}
+  - component: {fileID: 952110949}
   m_Layer: 5
   m_Name: Stamina Bar
   m_TagString: Untagged
@@ -8370,6 +8371,19 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &952110949
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 952110946}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dadfa1e9e3b0953498e2a1aa131d8edf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  slider: {fileID: 0}
 --- !u!1 &962968252
 GameObject:
   m_ObjectHideFlags: 0
@@ -9250,6 +9264,8 @@ MonoBehaviour:
   coinClip: {fileID: 8300000, guid: ec734cc161ee34c989f85b80ae32873f, type: 3}
   speed: 5
   footstepInterval: 0.4
+  moveDir: {x: 0, y: 0}
+  playerXP: {fileID: 0}
 --- !u!95 &1893342402
 Animator:
   serializedVersion: 7

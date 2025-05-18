@@ -24,16 +24,16 @@ public class HealthBarUI : MonoBehaviour
 
     private void AdjustBarWidth(int maxHealth)
     {
-        RectTransform rt = slider.GetComponent<RectTransform>();
-        if (rt != null)
-        {
-            // Crescimento baseado na vida acima de 100
-            float extraHealth = maxHealth - 100;
-            float newWidth = baseWidth + extraHealth * widthPerHealth;
+        //RectTransform rt = slider.GetComponent<RectTransform>();
+        //if (rt != null)
+        //{
+        //    // Crescimento baseado na vida acima de 100
+        //    float extraHealth = maxHealth - 100;
+        //    float newWidth = baseWidth + extraHealth * widthPerHealth;
 
-            // Ajusta somente a largura, mantendo o lado esquerdo fixo
-            rt.pivot = new Vector2(0f, 0.5f); // esquerda-central
-            rt.sizeDelta = new Vector2(newWidth, rt.sizeDelta.y);
-        }
+        //    // Ajusta somente a largura, mantendo o lado esquerdo fixo
+        //    rt.pivot = new Vector2(0f, 0.5f); // esquerda-central
+        //    rt.sizeDelta = new Vector2(newWidth, rt.sizeDelta.y);
+        //}
     }
 }
