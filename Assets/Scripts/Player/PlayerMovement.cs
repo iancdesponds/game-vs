@@ -10,10 +10,19 @@ public class PlayerMovement : MonoBehaviour
     public AudioClip coinClip;
     private AudioSource audioSource;
 
+    private PlayerStats playerStats;
+
+    public AudioClip xpClip;
+
+    public int xpAmount = 10;
+
     public float speed;
 
     private float footstepTimer = 0f;
     public float footstepInterval = 0.4f;
+
+    public Vector2 LastMoveDir { get; private set; }
+
 
     void Start()
     {
@@ -21,6 +30,19 @@ public class PlayerMovement : MonoBehaviour
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         audioSource = GetComponent<AudioSource>();
+        playerStats = GetComponent<PlayerStats>();
+    }
+    void Update()
+    {
+        float moveX = Input.GetAxisRaw("Horizontal");
+        float moveY = Input.GetAxisRaw("Vertical");
+        Vector2 input = new Vector2(moveX, moveY);
+
+        if (input != Vector2.zero)
+        {
+            LastMoveDir = input.normalized;
+        }
+
     }
 
     void PlayFootstep()
@@ -41,6 +63,7 @@ public class PlayerMovement : MonoBehaviour
         Vector2 movement = new Vector2(moveHorizontal, moveVertical);
 
         bool isMoving = movement != Vector2.zero;
+
 
         if (!isMoving)
         {
@@ -79,6 +102,13 @@ public class PlayerMovement : MonoBehaviour
         {
             Destroy(other.gameObject);
             audioSource.PlayOneShot(coinClip);
+        }
+
+        if (other.CompareTag("XP"))
+        {
+            Destroy(other.gameObject);
+            audioSource.PlayOneShot(xpClip);
+            playerStats.GainXP(xpAmount);
         }
     }
 }
