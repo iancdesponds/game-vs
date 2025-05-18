@@ -15,6 +15,10 @@ public class PlayerMovement : MonoBehaviour
     private float footstepTimer = 0f;
     public float footstepInterval = 0.4f;
 
+    // Novo campo público para o MapController ler
+    [HideInInspector]
+    public Vector2 moveDir;
+
     public PlayerXP playerXP; // <- Adicionado
 
     void Start()
@@ -38,33 +42,34 @@ public class PlayerMovement : MonoBehaviour
         float moveHorizontal = Input.GetAxisRaw("Horizontal");
         float moveVertical = Input.GetAxisRaw("Vertical");
 
-        Vector2 movement = new Vector2(moveHorizontal, moveVertical);
-
-        bool isMoving = movement != Vector2.zero;
+        Vector2 rawMovement = new Vector2(moveHorizontal, moveVertical);
+        bool isMoving = rawMovement != Vector2.zero;
 
         if (!isMoving)
         {
+            // quando parar, zera moveDir também
+            moveDir = Vector2.zero;
+
             animator.SetFloat("Speed", 0f);
             rb.MovePosition(rb.position);
             footstepTimer = 0f;
             return;
         }
 
-        Vector2 normalizedMovement = movement.normalized;
+        // normaliza para direção e atribui a moveDir
+        moveDir = rawMovement.normalized;
 
-        rb.MovePosition(rb.position + normalizedMovement * speed * Time.fixedDeltaTime);
+        // move o corpo
+        rb.MovePosition(rb.position + moveDir * speed * Time.fixedDeltaTime);
 
-        animator.SetFloat("Speed", movement.magnitude);
+        // animação
+        animator.SetFloat("Speed", rawMovement.magnitude);
 
-        if (moveHorizontal > 0)
-        {
-            spriteRenderer.flipX = false;
-        }
-        else if (moveHorizontal < 0)
-        {
-            spriteRenderer.flipX = true;
-        }
+        // flip de sprite
+        if (moveHorizontal > 0) spriteRenderer.flipX = false;
+        else if (moveHorizontal < 0) spriteRenderer.flipX = true;
 
+        // áudio de passo
         footstepTimer += Time.fixedDeltaTime;
         if (footstepTimer >= footstepInterval)
         {
