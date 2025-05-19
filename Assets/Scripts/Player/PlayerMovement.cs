@@ -12,16 +12,24 @@ public class PlayerMovement : MonoBehaviour
 
     public CoinManager coinManager;
 
+    private PlayerStats playerStats;
+
+    public AudioClip xpClip;
+
+    public int xpAmount = 10;
+
     public float speed;
 
     private float footstepTimer = 0f;
     public float footstepInterval = 0.4f;
 
-    // Novo campo público para o MapController ler
+    // Novo campo pï¿½blico para o MapController ler
     [HideInInspector]
     public Vector2 moveDir;
 
     public PlayerXP playerXP; // <- Adicionado
+    public Vector2 LastMoveDir { get; private set; }
+
 
     void Start()
     {
@@ -29,6 +37,19 @@ public class PlayerMovement : MonoBehaviour
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         audioSource = GetComponent<AudioSource>();
+        playerStats = GetComponent<PlayerStats>();
+    }
+    void Update()
+    {
+        float moveX = Input.GetAxisRaw("Horizontal");
+        float moveY = Input.GetAxisRaw("Vertical");
+        Vector2 input = new Vector2(moveX, moveY);
+
+        if (input != Vector2.zero)
+        {
+            LastMoveDir = input.normalized;
+        }
+
     }
 
     void PlayFootstep()
@@ -47,9 +68,10 @@ public class PlayerMovement : MonoBehaviour
         Vector2 rawMovement = new Vector2(moveHorizontal, moveVertical);
         bool isMoving = rawMovement != Vector2.zero;
 
+
         if (!isMoving)
         {
-            // quando parar, zera moveDir também
+            // quando parar, zera moveDir tambï¿½m
             moveDir = Vector2.zero;
 
             animator.SetFloat("Speed", 0f);
@@ -58,20 +80,20 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
-        // normaliza para direção e atribui a moveDir
+        // normaliza para direï¿½ï¿½o e atribui a moveDir
         moveDir = rawMovement.normalized;
 
         // move o corpo
         rb.MovePosition(rb.position + moveDir * speed * Time.fixedDeltaTime);
 
-        // animação
+        // animaï¿½ï¿½o
         animator.SetFloat("Speed", rawMovement.magnitude);
 
         // flip de sprite
         if (moveHorizontal > 0) spriteRenderer.flipX = false;
         else if (moveHorizontal < 0) spriteRenderer.flipX = true;
 
-        // áudio de passo
+        // ï¿½udio de passo
         footstepTimer += Time.fixedDeltaTime;
         if (footstepTimer >= footstepInterval)
         {
@@ -88,7 +110,7 @@ public class PlayerMovement : MonoBehaviour
             coinManager.AddCoin(5);
             audioSource.PlayOneShot(coinClip);
         }
-        else if (other.CompareTag("Xp"))
+        else if (other.CompareTag("Xp") || other.CompareTag("XP"))
         {
             Destroy(other.gameObject);
             audioSource.PlayOneShot(coinClip);
@@ -97,6 +119,11 @@ public class PlayerMovement : MonoBehaviour
             {
                 playerXP.GainXP(10); // <- valor que aumenta a stamina
             }
+
+            Destroy(other.gameObject);
+            audioSource.PlayOneShot(xpClip);
+            playerStats.GainXP(xpAmount);
+
         }
     }
 }
