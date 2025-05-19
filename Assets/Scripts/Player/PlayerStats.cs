@@ -27,37 +27,45 @@ public class PlayerStats : MonoBehaviour
     public List<AbilityBase> allAbilities; // Lista de TODAS as habilidades possíveis
     private List<AbilityBase> selectedAbilities = new List<AbilityBase>(); // 3 sorteadas
 
+    public XpBarUI xpBarUI;
+
     private PlayerAbilityExecutor abilityExecutor;
 
     void Start()
     {
-        abilityExecutor = GetComponent<PlayerAbilityExecutor>();
         currentHealth = maxHealth; // Garante que comece com vida cheia
+        xpBarUI.SetMaxXP(xpToNextLevel);
+        xpBarUI.SetXP(currentXP);
+    }
+    
+    void Awake()
+    {
+        abilityExecutor = GetComponent<PlayerAbilityExecutor>();
     }
 
     public void GainXP(int amount)
     {
         currentXP += amount;
 
-        
-
-        if (currentXP >= xpToNextLevel)
+        while (currentXP >= xpToNextLevel)
         {
+            currentXP -= xpToNextLevel;
             LevelUp();
         }
-    }
 
+        xpBarUI.SetXP(currentXP);
+    }
     void LevelUp()
     {
         level++;
-        currentXP -= xpToNextLevel;
         xpToNextLevel = Mathf.RoundToInt(xpToNextLevel * 1.5f);
+        xpBarUI.SetMaxXP(xpToNextLevel);
 
         Time.timeScale = 0f;
-
         levelUpMenu.SetActive(true);
         SelectRandomAbilities();
     }
+
 
     void SelectRandomAbilities()
     {
@@ -83,7 +91,14 @@ public class PlayerStats : MonoBehaviour
     {
         if (index < selectedAbilities.Count)
         {
-            AbilityBase chosen = Instantiate(selectedAbilities[index]); // nova instância
+            if (selectedAbilities[index] == null)
+            {
+                Debug.LogError("selectedAbilities[index] é NULL!");
+                return;
+            }
+
+            // Instanciar apenas se quiser uma cópia nova para upgrades individuais
+            AbilityBase chosen = ScriptableObject.Instantiate(selectedAbilities[index]);
             abilityExecutor.AddAbility(chosen);
             Debug.Log($"Habilidade escolhida: {chosen.abilityName}");
         }
@@ -91,6 +106,7 @@ public class PlayerStats : MonoBehaviour
         levelUpMenu.SetActive(false);
         Time.timeScale = 1f;
     }
+
 
     // Método para curar o jogador
     public void Heal(int amount)

@@ -14,7 +14,17 @@ public class PlayerAttack : MonoBehaviour
     public LayerMask enemyLayers;
     public int attackDamage = 1;
 
+
+    private AudioSource audioSource;
+    public AudioClip attackClip;
+    public AudioClip fireballClip;
+
     private Vector2 lastMoveDir = Vector2.right;
+
+    void Start()
+    {
+        audioSource = GetComponent<AudioSource>();
+    }
 
     void Update()
     {
@@ -41,6 +51,7 @@ public class PlayerAttack : MonoBehaviour
     void Attack()
     {
         animator.SetTrigger("Attack");
+        audioSource.PlayOneShot(attackClip);
         StartCoroutine(DelayedAttack());
     }
 

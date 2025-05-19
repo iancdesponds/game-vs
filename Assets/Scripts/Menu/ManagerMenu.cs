@@ -13,7 +13,7 @@ public class ManagerMenu : MonoBehaviour, IPointerEnterHandler, IPointerExitHand
 
     public void PlayGame()
     {
-        SceneManager.LoadSceneAsync(2);
+        SceneManager.LoadSceneAsync(4);
     }
 
     public void OpenSettings()

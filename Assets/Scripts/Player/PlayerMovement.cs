@@ -107,13 +107,13 @@ public class PlayerMovement : MonoBehaviour
         if (other.CompareTag("Coletavel"))
         {
             Destroy(other.gameObject);
-            coinManager.AddCoin(5);
+            // coinManager.AddCoin(5);
             audioSource.PlayOneShot(coinClip);
+   
         }
-        else if (other.CompareTag("Xp") || other.CompareTag("XP"))
+        else if (other.CompareTag("Xp"))
         {
             Destroy(other.gameObject);
-            audioSource.PlayOneShot(coinClip);
 
             if (playerXP != null)
             {
