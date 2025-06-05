@@ -3,14 +3,16 @@ using UnityEngine;
 public class EnemyFollowAttack : MonoBehaviour
 {
     public Transform player;
-    public float speed = 2f;
-    public float stopDistance = 0.5f; // Distância para parar e atacar
-    public float attackRate = 1f; // Tempo entre ataques (em segundos)
+    public float baseSpeed = 2f;
+    public float stopDistance = 0.5f;
+    public float attackRate = 1f;
+
+    private float currentSpeedMultiplier = 1f;
 
     private Rigidbody2D rb;
     private Vector2 movement;
     private SpriteRenderer spriteRenderer;
-    private float nextAttackTime = 0f; // Controla quando pode atacar de novo
+    private float nextAttackTime = 0f;
 
     void Start()
     {
@@ -32,7 +34,6 @@ public class EnemyFollowAttack : MonoBehaviour
         }
     }
 
-
     private void OnTriggerStay2D(Collider2D collision)
     {
         if (collision.CompareTag("Player"))
@@ -42,19 +43,23 @@ public class EnemyFollowAttack : MonoBehaviour
                 Attack();
                 nextAttackTime = Time.time + attackRate;
             }
-            movement = Vector2.zero; // Para o inimigo se estiver muito perto
+            movement = Vector2.zero;
         }
     }
 
     void FixedUpdate()
     {
-        rb.MovePosition(rb.position + movement * speed * Time.fixedDeltaTime);
+        rb.MovePosition(rb.position + movement * baseSpeed * currentSpeedMultiplier * Time.fixedDeltaTime);
     }
 
     void Attack()
     {
-        // Aqui é onde você coloca a lógica de ataque!
-        Debug.Log("Inimigo atacou o jogador!");
+        Debug.Log("Enemy attacked the player!");
         player.GetComponent<PlayerHealth>().TakeDamage(10);
+    }
+
+    public void SetSpeedMultiplier(float multiplier)
+    {
+        currentSpeedMultiplier = multiplier;
     }
 }
