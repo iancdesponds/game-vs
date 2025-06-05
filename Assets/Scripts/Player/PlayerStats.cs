@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using TMPro;
 
-
-
 public class PlayerStats : MonoBehaviour
 {
     [Header("Level & XP")]
@@ -20,27 +18,35 @@ public class PlayerStats : MonoBehaviour
 
     [Header("UI")]
     public GameObject levelUpMenu;
-    public Button[] abilityButtons; // 3 botões do menu (ligados no Inspector)
-    public TMP_Text[] abilityTexts; // Textos com nomes das habilidades (um para cada botão)
+    public Button[] abilityButtons; // 3 buttons for selecting abilities
+    public TMP_Text[] abilityTexts; // Text for each ability button
+
+    [Header("Reroll UI")]
+    public Button rerollButton;         // Reroll button
+    public TMP_Text rerollCounterText;  // Text showing remaining rerolls
+    public int rerollCount = 3;         // Starting rerolls
 
     [Header("Abilities")]
-    public List<AbilityBase> allAbilities; // Lista de TODAS as habilidades possíveis
-    private List<AbilityBase> selectedAbilities = new List<AbilityBase>(); // 3 sorteadas
+    public List<AbilityBase> allAbilities; // List of all possible abilities
+    private List<AbilityBase> selectedAbilities = new List<AbilityBase>(); // 3 selected
 
     public XpBarUI xpBarUI;
 
     private PlayerAbilityExecutor abilityExecutor;
 
-    void Start()
-    {
-        currentHealth = maxHealth; // Garante que comece com vida cheia
-        xpBarUI.SetMaxXP(xpToNextLevel);
-        xpBarUI.SetXP(currentXP);
-    }
-    
     void Awake()
     {
         abilityExecutor = GetComponent<PlayerAbilityExecutor>();
+    }
+
+    void Start()
+    {
+        currentHealth = maxHealth;
+        xpBarUI.SetMaxXP(xpToNextLevel);
+        xpBarUI.SetXP(currentXP);
+
+        rerollButton.onClick.AddListener(RerollAbilities);
+        UpdateRerollUI();
     }
 
     public void GainXP(int amount)
@@ -55,17 +61,22 @@ public class PlayerStats : MonoBehaviour
 
         xpBarUI.SetXP(currentXP);
     }
+
     void LevelUp()
     {
         level++;
         xpToNextLevel = Mathf.RoundToInt(xpToNextLevel * 1.5f);
         xpBarUI.SetMaxXP(xpToNextLevel);
 
+        // Remove the line below to make reroll count persistent
+        // rerollCount = 3;
+
+        UpdateRerollUI();
+
         Time.timeScale = 0f;
         levelUpMenu.SetActive(true);
         SelectRandomAbilities();
     }
-
 
     void SelectRandomAbilities()
     {
@@ -79,7 +90,7 @@ public class PlayerStats : MonoBehaviour
             selectedAbilities.Add(pool[randIndex]);
             abilityTexts[i].text = pool[randIndex].abilityName;
 
-            int capturedIndex = i; // Captura o índice para o lambda
+            int capturedIndex = i; // Capture index for lambda
             abilityButtons[i].onClick.RemoveAllListeners();
             abilityButtons[i].onClick.AddListener(() => SelectAbility(capturedIndex));
 
@@ -93,22 +104,40 @@ public class PlayerStats : MonoBehaviour
         {
             if (selectedAbilities[index] == null)
             {
-                Debug.LogError("selectedAbilities[index] é NULL!");
+                Debug.LogError("selectedAbilities[index] is NULL!");
                 return;
             }
 
-            // Instanciar apenas se quiser uma cópia nova para upgrades individuais
             AbilityBase chosen = ScriptableObject.Instantiate(selectedAbilities[index]);
             abilityExecutor.AddAbility(chosen);
-            Debug.Log($"Habilidade escolhida: {chosen.abilityName}");
+            Debug.Log($"Selected ability: {chosen.abilityName}");
         }
 
         levelUpMenu.SetActive(false);
         Time.timeScale = 1f;
     }
 
+    public void RerollAbilities()
+    {
+        if (rerollCount <= 0)
+        {
+            Debug.Log("No rerolls left!");
+            return;
+        }
 
-    // Método para curar o jogador
+        rerollCount--;
+        UpdateRerollUI();
+        SelectRandomAbilities();
+
+        Debug.Log("Abilities rerolled!");
+    }
+
+    void UpdateRerollUI()
+    {
+        rerollCounterText.text = rerollCount.ToString();
+        rerollButton.interactable = rerollCount > 0;
+    }
+
     public void Heal(int amount)
     {
         currentHealth = Mathf.Min(currentHealth + amount, maxHealth);
