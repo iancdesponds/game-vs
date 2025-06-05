@@ -30,7 +30,7 @@ public class UIManager : MonoBehaviour
     public void RestartGame()
     {
         Debug.Log("aaa");
-        SceneManager.LoadSceneAsync(1);
+        SceneManager.LoadSceneAsync(4);
     }
 
     // Botão: Voltar ao menu

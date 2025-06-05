@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections;
 
 public class PlayerStats : MonoBehaviour
 {
@@ -30,6 +31,9 @@ public class PlayerStats : MonoBehaviour
     public List<AbilityBase> allAbilities; // List of all possible abilities
     private List<AbilityBase> selectedAbilities = new List<AbilityBase>(); // 3 selected
 
+    [Header("Reroll Notification")]
+    public GameObject noRerollCanvas;
+
     public XpBarUI xpBarUI;
 
     private PlayerAbilityExecutor abilityExecutor;
@@ -46,6 +50,7 @@ public class PlayerStats : MonoBehaviour
         xpBarUI.SetXP(currentXP);
 
         rerollButton.onClick.AddListener(RerollAbilities);
+        noRerollCanvas.SetActive(false);
         UpdateRerollUI();
     }
 
@@ -121,7 +126,7 @@ public class PlayerStats : MonoBehaviour
     {
         if (rerollCount <= 0)
         {
-            Debug.Log("No rerolls left!");
+            StartCoroutine(HandleNoRerolls());
             return;
         }
 
@@ -132,10 +137,23 @@ public class PlayerStats : MonoBehaviour
         Debug.Log("Abilities rerolled!");
     }
 
+    IEnumerator HandleNoRerolls()
+    {
+        noRerollCanvas.SetActive(true);
+        Debug.Log("No rerolls left! Showing message.");
+
+        yield return new WaitForSecondsRealtime(5f);
+
+        noRerollCanvas.SetActive(false);
+        rerollCount = 1;
+        UpdateRerollUI();
+
+        Debug.Log("Reroll reset to 1.");
+    }
+
     void UpdateRerollUI()
     {
         rerollCounterText.text = rerollCount.ToString();
-        rerollButton.interactable = rerollCount > 0;
     }
 
     public void Heal(int amount)
