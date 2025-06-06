@@ -24,6 +24,7 @@ public class PlayerStats : MonoBehaviour
 
     [Header("Reroll UI")]
     public Button rerollButton;         // Reroll button
+    public TMP_Text rerollText;         // Reroll button
     public TMP_Text rerollCounterText;  // Text showing remaining rerolls
     public int rerollCount = 3;         // Starting rerolls
 
@@ -133,6 +134,9 @@ public class PlayerStats : MonoBehaviour
         rerollCount--;
         UpdateRerollUI();
         SelectRandomAbilities();
+        if (rerollCount == 0) { 
+            rerollText.text = "AD Reroll!";
+        }
 
         Debug.Log("Abilities rerolled!");
     }
@@ -145,6 +149,10 @@ public class PlayerStats : MonoBehaviour
         yield return new WaitForSecondsRealtime(5f);
 
         noRerollCanvas.SetActive(false);
+        if (rerollCount == 0)
+        {
+            rerollText.text = "Reroll!";
+        }
         rerollCount = 1;
         UpdateRerollUI();
 
