@@ -7,7 +7,7 @@ public class PlayerHealth : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private Animator animator;
     public int maxHealth = 100;
-    private int currentHealth;
+    public int currentHealth;
     public AudioClip damageClip;
     private AudioSource audioSource;
 

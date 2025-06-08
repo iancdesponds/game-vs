@@ -11,25 +11,22 @@ public class PlayerMovement : MonoBehaviour
     private AudioSource audioSource;
 
     public CoinManager coinManager;
-
     private PlayerStats playerStats;
 
     public AudioClip xpClip;
-
     public int xpAmount = 10;
-
     public float speed;
 
     private float footstepTimer = 0f;
     public float footstepInterval = 0.4f;
 
-    // Novo campo p�blico para o MapController ler
     [HideInInspector]
     public Vector2 moveDir;
 
-    public PlayerXP playerXP; // <- Adicionado
+    public PlayerXP playerXP;
     public Vector2 LastMoveDir { get; private set; }
 
+    public Joystick joystick; // <- joystick mobile
 
     void Start()
     {
@@ -39,10 +36,22 @@ public class PlayerMovement : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
         playerStats = GetComponent<PlayerStats>();
     }
+
     void Update()
     {
-        float moveX = Input.GetAxisRaw("Horizontal");
-        float moveY = Input.GetAxisRaw("Vertical");
+        float moveX;
+        float moveY;
+
+#if UNITY_ANDROID || UNITY_IOS
+        // Mobile: usar joystick
+        moveX = joystick.Horizontal;
+        moveY = joystick.Vertical;
+#else
+        // PC: usar teclado
+        moveX = Input.GetAxisRaw("Horizontal");
+        moveY = Input.GetAxisRaw("Vertical");
+#endif
+
         Vector2 input = new Vector2(moveX, moveY);
 
         if (input != Vector2.zero)
@@ -50,6 +59,34 @@ public class PlayerMovement : MonoBehaviour
             LastMoveDir = input.normalized;
         }
 
+        moveDir = input.normalized;
+    }
+
+    void FixedUpdate()
+    {
+        bool isMoving = moveDir != Vector2.zero;
+
+        if (!isMoving)
+        {
+            moveDir = Vector2.zero;
+            animator.SetFloat("Speed", 0f);
+            rb.MovePosition(rb.position);
+            footstepTimer = 0f;
+            return;
+        }
+
+        rb.MovePosition(rb.position + moveDir * speed * Time.fixedDeltaTime);
+        animator.SetFloat("Speed", moveDir.magnitude);
+
+        if (moveDir.x > 0) spriteRenderer.flipX = false;
+        else if (moveDir.x < 0) spriteRenderer.flipX = true;
+
+        footstepTimer += Time.fixedDeltaTime;
+        if (footstepTimer >= footstepInterval)
+        {
+            PlayFootstep();
+            footstepTimer = 0f;
+        }
     }
 
     void PlayFootstep()
@@ -60,56 +97,12 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    void FixedUpdate()
-    {
-        float moveHorizontal = Input.GetAxisRaw("Horizontal");
-        float moveVertical = Input.GetAxisRaw("Vertical");
-
-        Vector2 rawMovement = new Vector2(moveHorizontal, moveVertical);
-        bool isMoving = rawMovement != Vector2.zero;
-
-
-        if (!isMoving)
-        {
-            // quando parar, zera moveDir tamb�m
-            moveDir = Vector2.zero;
-
-            animator.SetFloat("Speed", 0f);
-            rb.MovePosition(rb.position);
-            footstepTimer = 0f;
-            return;
-        }
-
-        // normaliza para dire��o e atribui a moveDir
-        moveDir = rawMovement.normalized;
-
-        // move o corpo
-        rb.MovePosition(rb.position + moveDir * speed * Time.fixedDeltaTime);
-
-        // anima��o
-        animator.SetFloat("Speed", rawMovement.magnitude);
-
-        // flip de sprite
-        if (moveHorizontal > 0) spriteRenderer.flipX = false;
-        else if (moveHorizontal < 0) spriteRenderer.flipX = true;
-
-        // �udio de passo
-        footstepTimer += Time.fixedDeltaTime;
-        if (footstepTimer >= footstepInterval)
-        {
-            PlayFootstep();
-            footstepTimer = 0f;
-        }
-    }
-
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Coletavel"))
         {
             Destroy(other.gameObject);
-            // coinManager.AddCoin(5);
             audioSource.PlayOneShot(coinClip);
-   
         }
         else if (other.CompareTag("Xp"))
         {
@@ -117,13 +110,11 @@ public class PlayerMovement : MonoBehaviour
 
             if (playerXP != null)
             {
-                playerXP.GainXP(10); // <- valor que aumenta a stamina
+                playerXP.GainXP(10);
             }
 
-            Destroy(other.gameObject);
             audioSource.PlayOneShot(xpClip);
             playerStats.GainXP(xpAmount);
-
         }
     }
 }

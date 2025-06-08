@@ -58,9 +58,9 @@ public class FireballShooter : MonoBehaviour
 
     Vector3 GetLastMoveDirection()
     {
-        Vector3 dir = playerMovement != null ? (Vector3)playerMovement.LastMoveDir : Vector3.right;
-
-        // Retorne a última direção do player ou direcione ao inimigo
-        return dir;
+        // Direção oposta (negativa) ao último deslocamento do player
+        return playerMovement != null
+            ? (Vector3)(-playerMovement.LastMoveDir)   // ← aqui está a inversão
+            : Vector3.left;                            // padrão caso o componente não exista
     }
 }

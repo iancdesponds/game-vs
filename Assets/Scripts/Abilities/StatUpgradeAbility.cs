@@ -18,6 +18,7 @@ public class StatUpgradeAbility : AbilityBase
         {
             case StatType.MaxHealth:
                 health.maxHealth += value;
+                health.currentHealth = Mathf.Min(health.currentHealth + value, health.maxHealth);
                 break;
             case StatType.MoveSpeed:
                 movement.speed += value;

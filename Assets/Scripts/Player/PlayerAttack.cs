@@ -8,18 +8,13 @@ public class PlayerAttack : MonoBehaviour
 
     public Animator animator;
     public Transform attackPoint;
-    public float attackWidth = 1.5f;  // Largura da área de ataque
-    public float attackHeight = 0.8f; // Altura da área de ataque
-    public float attackDistance = 0.5f; // Distância da área de ataque a partir do centro do jogador
+    public float attackRadius = 2f; // Novo: raio da área de ataque
     public LayerMask enemyLayers;
     public int attackDamage = 1;
-
 
     private AudioSource audioSource;
     public AudioClip attackClip;
     public AudioClip fireballClip;
-
-    private Vector2 lastMoveDir = Vector2.right;
 
     void Start()
     {
@@ -28,18 +23,6 @@ public class PlayerAttack : MonoBehaviour
 
     void Update()
     {
-        // Atualiza direção
-        float moveX = Input.GetAxisRaw("Horizontal");
-        float moveY = Input.GetAxisRaw("Vertical");
-
-        Vector2 inputDir = new Vector2(moveX, moveY);
-        if (inputDir != Vector2.zero)
-            lastMoveDir = inputDir.normalized;
-
-        // Alinha o ponto de ataque à frente do jogador
-        attackPoint.position = transform.position + (Vector3)(lastMoveDir.normalized * attackDistance);
-
-        // Temporizador de ataque
         attackTimer += Time.deltaTime;
         if (attackTimer >= attackCooldown)
         {
@@ -57,29 +40,34 @@ public class PlayerAttack : MonoBehaviour
 
     IEnumerator DelayedAttack()
     {
-        // Espera um tempo antes de causar dano (ajuste conforme a animação)
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(0.2f); // Ajuste conforme animação
 
-        // Ângulo de rotação baseado na direção do jogador
-        float angle = Mathf.Atan2(lastMoveDir.y, lastMoveDir.x) * Mathf.Rad2Deg;
+        Collider2D[] enemiesInRange = Physics2D.OverlapCircleAll(attackPoint.position, attackRadius, enemyLayers);
 
-        // Detecta inimigos na área retangular do ataque (apenas na frente)
-        Collider2D[] hitEnemies = Physics2D.OverlapBoxAll(
-            attackPoint.position,
-            new Vector2(attackWidth, attackHeight),
-            angle,
-            enemyLayers
-        );
+        if (enemiesInRange.Length == 0)
+            yield break;
 
-        foreach (Collider2D enemy in hitEnemies)
+        // Acha o inimigo mais próximo
+        Collider2D closestEnemy = enemiesInRange[0];
+        float minDist = Vector2.Distance(transform.position, closestEnemy.transform.position);
+
+        foreach (Collider2D enemy in enemiesInRange)
         {
-            // Causa dano
-            EnemyHealth enemyHealth = enemy.GetComponent<EnemyHealth>();
-            if (enemyHealth != null)
-                enemyHealth.TakeDamage(attackDamage);
+            float dist = Vector2.Distance(transform.position, enemy.transform.position);
+            if (dist < minDist)
+            {
+                minDist = dist;
+                closestEnemy = enemy;
+            }
+        }
+
+        // Aplica dano ao inimigo mais próximo
+        EnemyHealth enemyHealth = closestEnemy.GetComponent<EnemyHealth>();
+        if (enemyHealth != null)
+        {
+            enemyHealth.TakeDamage(attackDamage);
         }
     }
-
 
     void OnDrawGizmosSelected()
     {
@@ -87,31 +75,6 @@ public class PlayerAttack : MonoBehaviour
             return;
 
         Gizmos.color = Color.red;
-        
-        // Desenha um retângulo na direção do movimento
-        float angle = 0;
-        if (Application.isPlaying)
-        {
-            angle = Mathf.Atan2(lastMoveDir.y, lastMoveDir.x) * Mathf.Rad2Deg;
-        }
-        else
-        {
-            // No editor, quando não estiver rodando, assume direção para direita
-            attackPoint.position = transform.position + Vector3.right * attackDistance;
-        }
-            
-        // Converter para Matrix4x4 para rotacionar o gizmo
-        Matrix4x4 originalMatrix = Gizmos.matrix;
-        Gizmos.matrix = Matrix4x4.TRS(
-            attackPoint.position, 
-            Quaternion.Euler(0, 0, angle), 
-            Vector3.one
-        );
-        
-        // Desenha o wireframe do retângulo
-        Gizmos.DrawWireCube(Vector3.zero, new Vector3(attackWidth, attackHeight, 0));
-        
-        // Restaura a matriz original
-        Gizmos.matrix = originalMatrix;
+        Gizmos.DrawWireSphere(attackPoint.position, attackRadius);
     }
 }

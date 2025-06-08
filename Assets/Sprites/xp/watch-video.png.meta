@@ -285,7 +285,13 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      watch-video_0: 3075154673171577175
+      watch-video_1: -6664758984449722491
+      watch-video_2: 5034673144076066319
+      watch-video_3: -8849641063953273896
+      watch-video_4: -1410923400441027660
+      watch-video_5: -3475059132550856419
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
