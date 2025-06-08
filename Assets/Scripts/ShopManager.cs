@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class ShopManager : MonoBehaviour
+public class ShopManagerTeste : MonoBehaviour
 {
     public PlayerHealth playerHealth;
 

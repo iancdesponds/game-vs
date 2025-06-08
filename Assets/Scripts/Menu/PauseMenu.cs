@@ -3,18 +3,24 @@ using UnityEngine.SceneManagement;
 
 public class PauseMenu : MonoBehaviour
 {
+    [Tooltip("Painel que apresenta as opções de pausa (Resume, LoadMainMenu, etc.)")]
     public GameObject pauseMenuUI;
+
     private bool isPaused = false;
 
-    void Update()
+    void Start()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            if (isPaused)
-                Resume();
-            else
-                Pause();
-        }
+        // Garante que o menu de pausa comece desativado
+        pauseMenuUI.SetActive(false);
+    }
+
+    // Chame este método no OnClick do seu botão "Pause"
+    public void TogglePause()
+    {
+        if (isPaused)
+            Resume();
+        else
+            Pause();
     }
 
     public void Resume()
@@ -33,7 +39,7 @@ public class PauseMenu : MonoBehaviour
 
     public void LoadMainMenu()
     {
-        Time.timeScale = 1f; // reset time scale before switching scenes
-        SceneManager.LoadSceneAsync(0); // make sure the name matches your menu scene
+        Time.timeScale = 1f;
+        SceneManager.LoadSceneAsync(0);
     }
 }
